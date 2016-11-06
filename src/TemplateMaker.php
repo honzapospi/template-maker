@@ -6,8 +6,10 @@
 
 namespace JP\TemplateMaker;
 use JP\Composition\UI\ITemplateControl;
+use JP\Composition\UI\Presenter;
 use Nette\Application\UI\Control;
 use Nette\Http\Request;
+use Nette\Utils\Strings;
 
 /**
  * TemplateMaker
@@ -19,22 +21,23 @@ class TemplateMaker extends \Nette\Object {
 	private $httpRequest;
 	private $fileCreator;
 	private $templateControl;
-	const KEY_CLASS = '__create_template';
+	const KEY_NAME = '__create_template';
 	const KEY_FILE = '__create_template_file';
+	private $templateDirectory;
 
-	public function __construct(Request $request, FileCreator $fileCreator, ITemplateControl $templateControl){
+	public function __construct($templateDirectory, Request $request, FileCreator $fileCreator, ITemplateControl $templateControl){
+		$this->templateDirectory = $templateDirectory;
 		$this->httpRequest = $request;
 		$this->fileCreator = $fileCreator;
 		$this->templateControl = $templateControl;
 	}
 
-	public function check(Control $control, $templateFilename){
-		$class = get_class($control);
-		$getClass = $this->httpRequest->getUrl()->getQueryParameter(self::KEY_CLASS);
-		if($getClass == $class){
-			$this->fileCreator->createTemplate($templateFilename, $control, $this->httpRequest->getUrl()->getQueryParameter(self::KEY_FILE));
-			$control->redirect('this');
+	public function createFiles(Presenter $presenter){
+		$name = $this->httpRequest->getUrl()->getQueryParameter(self::KEY_NAME);
+		$filename = $this->templateDirectory.'/'.strtr($name, array('-' => '/'));
+		if($name){
+			$this->fileCreator->createTemplate($filename, $name, $this->httpRequest->getUrl()->getQueryParameter(self::KEY_FILE));
+			$presenter->redirect('this');
 		}
 	}
-
 }

@@ -19,9 +19,9 @@ class FileCreator extends \Nette\Object {
 	private $createFiles = array('latte', 'less', 'js');
 	public $onCreateTemplate;
 
-	public function createTemplate($filename, Control $control, $ext = 'all'){
-		$baseName = Helpers::getBaseFilename($filename);
-		$key = self::createKey($control);
+	public function createTemplate($baseName, $key, $ext = 'all'){
+		$baseName .= '.';
+		$isControl = substr($key, -7) == 'Control';
 		if($ext == 'all'){
 			$files = $this->createFiles;
 		} else {
@@ -29,7 +29,7 @@ class FileCreator extends \Nette\Object {
 		}
 		if(in_array('latte', $files)){
 			$latte = $baseName.'latte';
-			if($control instanceof Presenter){
+			if(!$isControl){
 				$div = Html::el('div')->addAttributes(array('id' => $key));
 				self::createFile($latte, '{block #content}'."\n".$div->startTag().'{*** NEVER CHANGE GENERATED ID ***}'."\n\n".$div->endTag());
 			} else {
@@ -39,7 +39,7 @@ class FileCreator extends \Nette\Object {
 		}
 		if(in_array('less', $files)){
 			$less = $baseName.'less';
-			if($control instanceof Presenter){
+			if(!$isControl){
 				self::createFile($less, '#'.$key.'{ // NEVER CHANGE GENERATED ID'."\n\n}");
 			} else {
 				self::createFile($less, '.'.$key.'{ // NEVER CHANGE GENERATED CLASSNAME'."\n\n}");
@@ -47,32 +47,16 @@ class FileCreator extends \Nette\Object {
 		}
 		if(in_array('js', $files)){
 			$js = $baseName.'js';
-			if($control instanceof Presenter){
+			if(!$isControl){
 				self::createFile($js, "//$('<selector>', $('#".$key."'));");
 			} else {
 				self::createFile($js, "//$('<selector>',$('.".$key."'));");
 			}
 		}
-		$this->onCreateTemplate($this, $filename);
+		$this->onCreateTemplate($this, $baseName);
 	}
 
-	private static function createKey(Control $control){
-		$parts = explode('\\', get_class($control));
-		array_shift($parts);
-		$key = array();
-		foreach($parts as $part){
-			if(substr($part, -6) == 'Module'){
-				$key[] = $part;
-			} elseif(substr($part, -9) == 'Presenter'){
-				$key[] = $part;
-				break;
-			}
-		}
-		$key = implode('-',$key);
-		if($control instanceof Presenter)
-			$key .= '-' . $control->view;
-		return $key;
-	}
+
 
 	private static function createFile($filename, $contents){
 		$dir = dirname($filename);

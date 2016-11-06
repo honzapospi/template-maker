@@ -34,8 +34,7 @@ class Bar extends \Nette\Object implements IBarPanel {
 	public function addControl(Control $control, $templateFilename){
 		if(Debugger::$productionMode)
 			return;
-		$this->templateMaker ? $this->templateMaker->check($control, $templateFilename) : null;
-		$this->controls[] = ArrayHash::from(array(
+		$this->controls[$templateFilename] = ArrayHash::from(array(
 			'control' => $control,
 			'templateFile' => $templateFilename
 		));
@@ -77,6 +76,7 @@ class Bar extends \Nette\Object implements IBarPanel {
 		$files = array('latte', 'less', 'js');
 		$baseFileName = Helpers::getBaseFilename($templateFile);
 		$exist = true;
+		$key =self::createKey($control);
 		foreach($files as $ext){
 			if(file_exists($baseFileName.$ext)){
 				$file = Html::el('a')->setHtml($ext)->setAttribute('href', \Tracy\Helpers::editorUri($baseFileName.$ext));
@@ -87,7 +87,7 @@ class Bar extends \Nette\Object implements IBarPanel {
 				$file->addHtml($text);
 				if($this->templateMaker){
 					$link = Html::el('a')->setHtml('(create)')->setAttribute('href', $this->presenter->link('this', array(
-						'__create_template' => get_class($control),
+						'__create_template' => $key,
 						'__create_template_file' => $ext
 					)));
 					$file->addHtml($link);
@@ -100,10 +100,30 @@ class Bar extends \Nette\Object implements IBarPanel {
 			$tr->addHtml($action);
 			if(!$exist){
 				$action->addHtml(Html::el('a')->setHtml('create all')->setAttribute('href', $this->presenter->link('this', array(
-					'__create_template' => get_class($control),
+					'__create_template' => $key,
 					'__create_template_file' => 'all'
 				))));
 			}
 		}
+	}
+
+	private static function createKey(Control $control){
+		$parts = explode('\\', get_class($control));
+		array_shift($parts);
+		$key = array();
+		foreach($parts as $part){
+			if(substr($part, -6) == 'Module'){
+				$key[] = $part;
+			} elseif(substr($part, -9) == 'Presenter'){
+				$key[] = $part;
+				break;
+			} elseif(!$control instanceof Presenter){
+				$key[] = $part;
+			}
+		}
+		$key = implode('-',$key);
+		if($control instanceof Presenter)
+			$key .= '-' . $control->view;
+		return $key;
 	}
 }
