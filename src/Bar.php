@@ -123,7 +123,7 @@ class Bar extends \Nette\Object implements IBarPanel {
 		}
 		$key = implode('-',$key);
 		if($control instanceof Presenter)
-			$key .= '-' . $control->view;
+			$key .= '.' . $control->view;
 		return $key;
 	}
 }
