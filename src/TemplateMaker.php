@@ -36,6 +36,7 @@ class TemplateMaker extends \Nette\Object {
 		$name = $this->httpRequest->getUrl()->getQueryParameter(self::KEY_NAME);
 		$filename = $this->templateDirectory.'/'.strtr($name, array('-' => '/'));
 		if($name){
+			$name = strtr($name, array('.' => '_'));
 			$this->fileCreator->createTemplate($filename, $name, $this->httpRequest->getUrl()->getQueryParameter(self::KEY_FILE));
 			$presenter->redirect('this');
 		}
