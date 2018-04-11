@@ -5,13 +5,15 @@
  */
 
 namespace JP\TemplateMaker;
+use Nette\StaticClass;
 
 /**
  * Helpers
  * @author Jan Pospisil
  */
 
-class Helpers extends \Nette\Object {
+class Helpers {
+	use StaticClass;
 
 	public static function getBaseFilename($filename){
 		$parts = explode('.', $filename);

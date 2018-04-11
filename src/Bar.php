@@ -11,13 +11,16 @@ use Nette\Utils\ArrayHash;
 use Nette\Utils\Html;
 use Tracy\Debugger;
 use Tracy\IBarPanel;
+use Nette\SmartObject;
+
 
 /**
  * Bar
  * @author Jan Pospisil
  */
 
-class Bar extends \Nette\Object implements IBarPanel {
+class Bar implements IBarPanel {
+	use SmartObject;
 
 	private $controls = array();
 	private $presenter;

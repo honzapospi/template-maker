@@ -10,13 +10,15 @@ use JP\Composition\UI\Presenter;
 use Nette\Application\UI\Control;
 use Nette\Http\Request;
 use Nette\Utils\Strings;
+use Nette\SmartObject;
 
 /**
  * TemplateMaker
  * @author Jan Pospisil
  */
 
-class TemplateMaker extends \Nette\Object {
+class TemplateMaker {
+	use SmartObject;
 
 	private $httpRequest;
 	private $fileCreator;

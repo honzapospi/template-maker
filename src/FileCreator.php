@@ -8,13 +8,15 @@ namespace JP\TemplateMaker;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
 use Nette\Utils\Html;
+use Nette\SmartObject;
 
 /**
  * TemplateMaker
  * @author Jan Pospisil
  */
 
-class FileCreator extends \Nette\Object {
+class FileCreator {
+	use SmartObject;
 
 	private $createFiles = array('latte', 'less', 'js');
 	public $onCreateTemplate;
