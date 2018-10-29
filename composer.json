@@ -1,7 +1,11 @@
 {
   "name": "honzapospi/template-maker",
-  "description" : "Automatic creation of templates for really lazy programmers.",
-  "license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+  "description": "Automatic creation of templates for really lazy programmers.",
+  "license": [
+    "BSD-3-Clause",
+    "GPL-2.0",
+    "GPL-3.0"
+  ],
   "authors": [
     {
       "name": "Jan Pospisil",
@@ -9,15 +13,14 @@
     }
   ],
   "autoload": {
-    "classmap": ["src/"]
+    "classmap": [
+      "src/"
+    ]
   },
   "require": {
-    "php": ">= 7.0",
+    "php": ">= 7.1",
     "latte/latte": "~2.4",
     "tracy/tracy": "~2.4"
-  },
-  "require-dev": {
-    "nette/tester": "~1.6"
   },
   "minimum-stability": "dev"
 }
